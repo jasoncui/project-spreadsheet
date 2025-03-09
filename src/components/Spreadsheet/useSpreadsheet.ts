@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { 
   CellData, 
@@ -26,7 +25,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
   const [editing, setEditing] = useState<boolean>(false);
   const [editValue, setEditValue] = useState<string>('');
 
-  // Generate column headers (A, B, C, ..., Z, AA, AB, ...)
   const columnHeaders = useMemo(() => {
     return Array.from({ length: config.cols }, (_, i) => {
       let header = '';
@@ -41,7 +39,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
     });
   }, [config.cols]);
 
-  // Start editing a cell
   const startEditing = useCallback(() => {
     if (!activeCell) return;
     
@@ -52,29 +49,23 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
     setEditValue(cellData?.formula || cellData?.value || '');
   }, [activeCell, data]);
 
-  // Stop editing and save the value
   const stopEditing = useCallback((save: boolean = true) => {
     if (!activeCell || !editing) return;
     
     if (save) {
       const cellKey = indicesToCellRef(activeCell.row, activeCell.col);
       
-      // Check if the input is a formula
       if (editValue.startsWith('=')) {
-        // Check for circular references
         if (hasCircularReference(editValue, data, cellKey)) {
           toast.error('Circular reference detected!');
           return;
         }
         
-        // Create a new copy of the data object to ensure React detects the change
         const newData = { ...data };
         
         try {
-          // Calculate the formula result
           const formulaResult = evaluateFormula(editValue, newData);
           
-          // Update the cell with both the formula and its evaluated value
           newData[cellKey] = {
             ...(newData[cellKey] || {}),
             value: String(formulaResult),
@@ -82,7 +73,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
             type: 'formula',
           };
           
-          // Re-evaluate cells that might depend on this one
           Object.keys(newData).forEach((key) => {
             if (key !== cellKey && newData[key]?.formula) {
               try {
@@ -100,13 +90,11 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
             }
           });
           
-          // Update state with the new data
           setData(newData);
         } catch (error) {
           console.error('Formula evaluation error:', error);
           toast.error('Invalid formula');
           
-          // Still update the cell but mark it as an error
           setData((prevData) => ({
             ...prevData,
             [cellKey]: {
@@ -118,7 +106,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
           }));
         }
       } else {
-        // Not a formula, just update the value
         const cellType = isNaN(Number(editValue)) ? 'text' : 'number';
         
         setData((prevData) => ({
@@ -137,14 +124,12 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
     setEditValue('');
   }, [activeCell, editing, editValue, data]);
 
-  // Handle cell selection
   const selectCell = useCallback((position: CellPosition, isShiftKey: boolean = false) => {
     if (editing) {
       stopEditing(true);
     }
     
     if (isShiftKey && activeCell) {
-      // Create a selection range
       setSelectedRange({
         start: activeCell,
         end: position,
@@ -155,13 +140,11 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
     }
   }, [activeCell, editing, stopEditing]);
 
-  // Get cell data by position
   const getCellData = useCallback((row: number, col: number): CellData | undefined => {
     const cellKey = indicesToCellRef(row, col);
     return data[cellKey];
   }, [data]);
 
-  // Format a cell
   const formatCell = useCallback((action: CellFormatAction) => {
     if (!activeCell) return;
     
@@ -201,7 +184,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
     }));
   }, [activeCell, data]);
 
-  // Check if a cell is selected
   const isCellSelected = useCallback((row: number, col: number): boolean => {
     if (!selectedRange) return false;
     
@@ -214,19 +196,16 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
     return (row >= minRow && row <= maxRow && col >= minCol && col <= maxCol);
   }, [selectedRange]);
 
-  // Check if a cell is active
   const isCellActive = useCallback((row: number, col: number): boolean => {
     return !!(activeCell && activeCell.row === row && activeCell.col === col);
   }, [activeCell]);
 
-  // Handle keyboard navigation
   useEffect(() => {
     if (editing) return;
     
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!activeCell) return;
       
-      // Don't handle if Command/Ctrl key is pressed (to not interfere with browser shortcuts)
       if (e.metaKey || e.ctrlKey) return;
       
       const { row, col } = activeCell;
@@ -259,39 +238,30 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
         case 'Enter':
           e.preventDefault();
           if (e.shiftKey) {
-            // Shift+Enter: move up
             if (row > 0) {
               selectCell({ row: row - 1, col });
             }
           } else {
-            // Enter: move down
-            if (row < config.rows - 1) {
-              selectCell({ row: row + 1, col });
-            }
+            startEditing();
           }
           break;
         case 'Tab':
           e.preventDefault();
           if (e.shiftKey) {
-            // Shift+Tab: move left
             if (col > 0) {
               selectCell({ row, col: col - 1 });
             } else if (row > 0) {
-              // Wrap to previous row
               selectCell({ row: row - 1, col: config.cols - 1 });
             }
           } else {
-            // Tab: move right
             if (col < config.cols - 1) {
               selectCell({ row, col: col + 1 });
             } else if (row < config.rows - 1) {
-              // Wrap to next row
               selectCell({ row: row + 1, col: 0 });
             }
           }
           break;
         case 'F2':
-        case 'Enter':
           e.preventDefault();
           startEditing();
           break;
@@ -299,7 +269,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
         case 'Backspace':
           e.preventDefault();
           if (selectedRange) {
-            // Clear all cells in the range
             const { start, end } = selectedRange;
             const minRow = Math.min(start.row, end.row);
             const maxRow = Math.max(start.row, end.row);
@@ -319,7 +288,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
             
             setData(newData);
           } else if (activeCell) {
-            // Clear just the active cell
             const cellKey = indicesToCellRef(activeCell.row, activeCell.col);
             const newData = { ...data };
             
