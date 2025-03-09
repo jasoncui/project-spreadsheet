@@ -112,42 +112,57 @@ export const SpreadsheetGrid: React.FC<SpreadsheetGridProps> = ({
       <div 
         ref={spreadsheetRef}
         className="flex-grow overflow-auto relative"
-        style={{ height: 'calc(100vh - 66px)' }}
       >
-        <div className="flex">
-          <SpreadsheetHeader 
-            columnHeaders={columnHeaders} 
-            rows={config.rows}
-          />
+        <div className="inline-block min-w-max">
+          <div className="sticky top-0 left-0 z-20 flex">
+            <div className="spreadsheet-corner"></div>
+            <div className="flex">
+              {columnHeaders.map((header, index) => (
+                <div key={`col-${index}`} className="spreadsheet-header-cell">
+                  {header}
+                </div>
+              ))}
+            </div>
+          </div>
           
-          <div className="flex flex-col">
-            {Array.from({ length: config.rows }, (_, rowIndex) => (
-              <div key={`row-${rowIndex}`} className="flex">
-                {Array.from({ length: config.cols }, (_, colIndex) => {
-                  const cellData = getCellData(rowIndex, colIndex);
-                  const isSelected = isCellSelected(rowIndex, colIndex);
-                  const isActive = isCellActive(rowIndex, colIndex);
-                  const isEditing = editing && isActive;
-                  
-                  return (
-                    <Cell
-                      key={`cell-${rowIndex}-${colIndex}`}
-                      row={rowIndex}
-                      col={colIndex}
-                      data={cellData}
-                      isSelected={isSelected}
-                      isActive={isActive}
-                      isEditing={isEditing}
-                      editValue={editValue}
-                      onSelect={(row, col, isShiftKey) => selectCell({ row, col }, isShiftKey)}
-                      onDoubleClick={startEditing}
-                      onEditValueChange={setEditValue}
-                      onStopEditing={stopEditing}
-                    />
-                  );
-                })}
-              </div>
-            ))}
+          <div className="flex">
+            <div className="sticky left-0 z-10">
+              {Array.from({ length: config.rows }, (_, i) => (
+                <div key={`row-${i}`} className="spreadsheet-row-header">
+                  {i + 1}
+                </div>
+              ))}
+            </div>
+            
+            <div>
+              {Array.from({ length: config.rows }, (_, rowIndex) => (
+                <div key={`row-${rowIndex}`} className="flex whitespace-nowrap">
+                  {Array.from({ length: config.cols }, (_, colIndex) => {
+                    const cellData = getCellData(rowIndex, colIndex);
+                    const isSelected = isCellSelected(rowIndex, colIndex);
+                    const isActive = isCellActive(rowIndex, colIndex);
+                    const isEditing = editing && isActive;
+                    
+                    return (
+                      <Cell
+                        key={`cell-${rowIndex}-${colIndex}`}
+                        row={rowIndex}
+                        col={colIndex}
+                        data={cellData}
+                        isSelected={isSelected}
+                        isActive={isActive}
+                        isEditing={isEditing}
+                        editValue={editValue}
+                        onSelect={(row, col, isShiftKey) => selectCell({ row, col }, isShiftKey)}
+                        onDoubleClick={startEditing}
+                        onEditValueChange={setEditValue}
+                        onStopEditing={stopEditing}
+                      />
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

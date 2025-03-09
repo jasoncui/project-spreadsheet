@@ -114,10 +114,11 @@
   }
 
   .spreadsheet-cell {
-    @apply relative cell-transition border-r border-b border-gray-300 outline-none p-1 text-sm select-none overflow-hidden;
+    @apply relative cell-transition border border-gray-300 outline-none p-1 text-sm select-none overflow-hidden;
     min-width: 100px;
     max-width: 100px;
     height: 32px;
+    background-color: white;
   }
 
   .spreadsheet-cell-selected {
@@ -133,21 +134,21 @@
   }
 
   .spreadsheet-header-cell {
-    @apply bg-gray-100 font-medium text-gray-700 text-sm border-r border-b border-gray-300 flex items-center justify-center select-none;
+    @apply bg-gray-100 font-medium text-gray-700 text-sm border border-gray-300 flex items-center justify-center select-none;
     height: 32px;
     min-width: 100px;
     max-width: 100px;
   }
 
   .spreadsheet-row-header {
-    @apply bg-gray-100 font-medium text-gray-700 text-sm border-r border-b border-gray-300 flex items-center justify-center select-none;
+    @apply bg-gray-100 font-medium text-gray-700 text-sm border border-gray-300 flex items-center justify-center select-none;
     height: 32px;
     min-width: 40px;
     max-width: 40px;
   }
 
   .spreadsheet-corner {
-    @apply bg-gray-100 border-r border-b border-gray-300;
+    @apply bg-gray-100 border border-gray-300;
     min-width: 40px;
     max-width: 40px;
     height: 32px;

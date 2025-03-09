@@ -11,11 +11,11 @@ export const SpreadsheetHeader: React.FC<SpreadsheetHeaderProps> = ({
   rows
 }) => {
   return (
-    <>
+    <div className="flex">
       {/* Corner cell (top-left empty cell) */}
-      <div className="spreadsheet-corner sticky top-0 left-0 z-20" />
+      <div className="spreadsheet-corner sticky top-0 left-0 z-20"></div>
       
-      {/* Column headers (A, B, C, ...) */}
+      {/* Column headers row */}
       <div className="flex sticky top-0 z-10">
         {columnHeaders.map((header, index) => (
           <div key={`col-${index}`} className="spreadsheet-header-cell">
@@ -24,7 +24,7 @@ export const SpreadsheetHeader: React.FC<SpreadsheetHeaderProps> = ({
         ))}
       </div>
       
-      {/* Row headers (1, 2, 3, ...) */}
+      {/* Row headers column */}
       <div className="flex flex-col sticky left-0 z-10">
         {Array.from({ length: rows }, (_, i) => (
           <div key={`row-${i}`} className="spreadsheet-row-header">
@@ -32,6 +32,6 @@ export const SpreadsheetHeader: React.FC<SpreadsheetHeaderProps> = ({
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };

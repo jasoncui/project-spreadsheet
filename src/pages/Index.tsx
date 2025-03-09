@@ -29,8 +29,8 @@ const Index = () => {
     <div className="min-h-screen w-full bg-white">
       <div className="h-screen flex flex-col">
         <h1 className="text-xl font-semibold p-4 border-b">Spreadsheet App</h1>
-        <div className="flex-grow overflow-hidden">
-          <SpreadsheetGrid initialData={sampleData} rows={100} columns={26} />
+        <div className="flex-grow overflow-auto">
+          <SpreadsheetGrid initialData={sampleData} rows={50} columns={20} />
         </div>
       </div>
     </div>
