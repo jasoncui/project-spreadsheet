@@ -67,39 +67,67 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
           return;
         }
         
+        // Create a new copy of the data object to ensure React detects the change
         const newData = { ...data };
         
-        // Update the cell with both the formula and its evaluated value
-        newData[cellKey] = {
-          value: String(evaluateFormula(editValue, data)),
-          formula: editValue,
-          ...(data[cellKey] || {}),
-          type: 'formula',
-        };
-        
-        setData(newData);
-        
-        // Re-evaluate cells that might depend on this one
-        // This is a simple approach; a real app would need a more sophisticated dependency graph
-        Object.keys(newData).forEach((key) => {
-          if (key !== cellKey && newData[key].formula) {
-            try {
-              newData[key].value = String(evaluateFormula(newData[key].formula, newData));
-            } catch (e) {
-              console.error(`Error evaluating formula in ${key}:`, e);
-              newData[key].value = '#ERROR!';
+        try {
+          // Calculate the formula result
+          const formulaResult = evaluateFormula(editValue, newData);
+          
+          // Update the cell with both the formula and its evaluated value
+          newData[cellKey] = {
+            ...(newData[cellKey] || {}),
+            value: String(formulaResult),
+            formula: editValue,
+            type: 'formula',
+          };
+          
+          // Re-evaluate cells that might depend on this one
+          Object.keys(newData).forEach((key) => {
+            if (key !== cellKey && newData[key]?.formula) {
+              try {
+                newData[key] = {
+                  ...newData[key],
+                  value: String(evaluateFormula(newData[key].formula!, newData))
+                };
+              } catch (e) {
+                console.error(`Error evaluating formula in ${key}:`, e);
+                newData[key] = {
+                  ...newData[key],
+                  value: '#ERROR!'
+                };
+              }
             }
-          }
-        });
+          });
+          
+          // Update state with the new data
+          setData(newData);
+        } catch (error) {
+          console.error('Formula evaluation error:', error);
+          toast.error('Invalid formula');
+          
+          // Still update the cell but mark it as an error
+          setData((prevData) => ({
+            ...prevData,
+            [cellKey]: {
+              ...(prevData[cellKey] || {}),
+              value: '#ERROR!',
+              formula: editValue,
+              type: 'formula',
+            }
+          }));
+        }
       } else {
         // Not a formula, just update the value
+        const cellType = isNaN(Number(editValue)) ? 'text' : 'number';
+        
         setData((prevData) => ({
           ...prevData,
           [cellKey]: {
-            value: editValue,
             ...(prevData[cellKey] || {}),
+            value: editValue,
             formula: undefined,
-            type: isNaN(Number(editValue)) ? 'text' : 'number',
+            type: cellType,
           }
         }));
       }
