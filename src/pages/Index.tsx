@@ -1,12 +1,32 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import { SpreadsheetGrid } from '@/components/Spreadsheet/SpreadsheetGrid';
 
 const Index = () => {
+  // Sample initial data for demonstration
+  const sampleData = {
+    'A1': { value: 'Product', format: { bold: true, align: 'center' } },
+    'B1': { value: 'Quantity', format: { bold: true, align: 'center' } },
+    'C1': { value: 'Price', format: { bold: true, align: 'center' } },
+    'D1': { value: 'Total', format: { bold: true, align: 'center' } },
+    'A2': { value: 'Apple' },
+    'B2': { value: '5', type: 'number' },
+    'C2': { value: '1.20', type: 'number' },
+    'D2': { value: '6.00', formula: '=B2*C2', type: 'formula' },
+    'A3': { value: 'Orange' },
+    'B3': { value: '3', type: 'number' },
+    'C3': { value: '0.80', type: 'number' },
+    'D3': { value: '2.40', formula: '=B3*C3', type: 'formula' },
+    'A4': { value: 'Banana' },
+    'B4': { value: '2', type: 'number' },
+    'C4': { value: '0.60', type: 'number' },
+    'D4': { value: '1.20', formula: '=B4*C4', type: 'formula' },
+    'D5': { value: '9.60', formula: '=D2+D3+D4', type: 'formula', format: { bold: true } }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen w-full max-w-full overflow-hidden bg-white animate-fade-in">
+      <SpreadsheetGrid initialData={sampleData} rows={100} columns={26} />
     </div>
   );
 };

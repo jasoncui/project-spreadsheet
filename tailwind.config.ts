@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,6 +19,25 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: [
+					'-apple-system',
+					'BlinkMacSystemFont',
+					'San Francisco',
+					'Segoe UI',
+					'Roboto',
+					'Helvetica Neue',
+					'sans-serif',
+				],
+				mono: [
+					'SFMono-Regular',
+					'SF Mono',
+					'Menlo',
+					'Consolas',
+					'Liberation Mono',
+					'monospace',
+				],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -61,6 +81,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				spreadsheet: {
+					gridLine: '#e0e0e0',
+					header: '#f5f5f7',
+					cell: '#ffffff',
+					cellSelected: 'rgba(25, 118, 210, 0.08)',
+					cellActive: 'rgba(25, 118, 210, 0.16)',
 				}
 			},
 			borderRadius: {
@@ -84,11 +111,47 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+				'fade-in': {
+					from: {
+						opacity: '0'
+					},
+					to: {
+						opacity: '1'
+					}
+				},
+				'slide-up': {
+					from: {
+						transform: 'translateY(10px)',
+						opacity: '0'
+					},
+					to: {
+						transform: 'translateY(0)',
+						opacity: '1'
+					}
+				},
+				'cell-highlight': {
+					'0%': {
+						boxShadow: '0 0 0 0 rgba(25, 118, 210, 0)'
+					},
+					'40%': {
+						boxShadow: '0 0 0 2px rgba(25, 118, 210, 0.4)'
+					},
+					'100%': {
+						boxShadow: '0 0 0 2px rgba(25, 118, 210, 0)'
+					}
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.3s ease-out',
+				'slide-up': 'slide-up 0.3s ease-out',
+				'cell-highlight': 'cell-highlight 0.5s ease-out',
+			},
+			boxShadow: {
+				'toolbar': '0 2px 10px rgba(0, 0, 0, 0.05)',
+				'cell-focus': '0 0 0 2px rgba(25, 118, 210, 0.4)',
 			}
 		}
 	},

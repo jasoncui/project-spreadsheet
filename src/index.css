@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 210 100% 50%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -35,19 +36,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -61,7 +55,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    --primary: 210 100% 60%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -97,5 +91,73 @@
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+@layer components {
+  .cell-transition {
+    transition: background-color 0.15s ease, box-shadow 0.2s ease;
+  }
+
+  .spreadsheet-cell {
+    @apply relative cell-transition border-r border-b border-spreadsheet-gridLine outline-none p-1 text-sm select-none overflow-hidden;
+    min-width: 100px;
+    max-width: 100px;
+    height: 32px;
+  }
+
+  .spreadsheet-cell-selected {
+    @apply bg-spreadsheet-cellSelected;
+  }
+
+  .spreadsheet-cell-active {
+    @apply bg-spreadsheet-cellActive;
+  }
+
+  .spreadsheet-header-cell {
+    @apply bg-spreadsheet-header font-medium text-gray-700 text-sm border-r border-b border-spreadsheet-gridLine flex items-center justify-center select-none;
+    height: 32px;
+    min-width: 100px;
+    max-width: 100px;
+  }
+
+  .spreadsheet-row-header {
+    @apply bg-spreadsheet-header font-medium text-gray-700 text-sm border-r border-b border-spreadsheet-gridLine flex items-center justify-center select-none;
+    height: 32px;
+    min-width: 40px;
+    max-width: 40px;
+  }
+
+  .spreadsheet-corner {
+    @apply bg-spreadsheet-header border-r border-b border-spreadsheet-gridLine;
+    min-width: 40px;
+    max-width: 40px;
+    height: 32px;
+  }
+
+  .toolbar-button {
+    @apply h-9 px-2.5 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .toolbar-button-muted {
+    @apply bg-transparent hover:bg-secondary text-muted-foreground hover:text-foreground;
+  }
+
+  .toolbar-separator {
+    @apply w-px h-6 bg-gray-200 mx-2;
   }
 }
