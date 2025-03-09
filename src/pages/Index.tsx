@@ -1,14 +1,15 @@
 
 import React, { useState } from 'react';
 import { SpreadsheetGrid } from '@/components/Spreadsheet/SpreadsheetGrid';
+import { CellTextAlign } from '@/components/Spreadsheet/types';
 
 const Index = () => {
-  // Sample initial data for demonstration
+  // Sample initial data with properly typed align properties
   const sampleData = {
-    'A1': { value: 'Product', format: { bold: true, align: 'center' } },
-    'B1': { value: 'Quantity', format: { bold: true, align: 'center' } },
-    'C1': { value: 'Price', format: { bold: true, align: 'center' } },
-    'D1': { value: 'Total', format: { bold: true, align: 'center' } },
+    'A1': { value: 'Product', format: { bold: true, align: 'center' as CellTextAlign } },
+    'B1': { value: 'Quantity', format: { bold: true, align: 'center' as CellTextAlign } },
+    'C1': { value: 'Price', format: { bold: true, align: 'center' as CellTextAlign } },
+    'D1': { value: 'Total', format: { bold: true, align: 'center' as CellTextAlign } },
     'A2': { value: 'Apple' },
     'B2': { value: '5', type: 'number' },
     'C2': { value: '1.20', type: 'number' },
