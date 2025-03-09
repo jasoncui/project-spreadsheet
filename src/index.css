@@ -114,36 +114,40 @@
   }
 
   .spreadsheet-cell {
-    @apply relative cell-transition border-r border-b border-spreadsheet-gridLine outline-none p-1 text-sm select-none overflow-hidden;
+    @apply relative cell-transition border-r border-b border-gray-300 outline-none p-1 text-sm select-none overflow-hidden;
     min-width: 100px;
     max-width: 100px;
     height: 32px;
   }
 
   .spreadsheet-cell-selected {
-    @apply bg-spreadsheet-cellSelected;
+    @apply bg-blue-100;
   }
 
   .spreadsheet-cell-active {
-    @apply bg-spreadsheet-cellActive;
+    @apply bg-blue-200;
+  }
+
+  .shadow-cell-focus {
+    box-shadow: inset 0 0 0 2px rgb(59, 130, 246);
   }
 
   .spreadsheet-header-cell {
-    @apply bg-spreadsheet-header font-medium text-gray-700 text-sm border-r border-b border-spreadsheet-gridLine flex items-center justify-center select-none;
+    @apply bg-gray-100 font-medium text-gray-700 text-sm border-r border-b border-gray-300 flex items-center justify-center select-none;
     height: 32px;
     min-width: 100px;
     max-width: 100px;
   }
 
   .spreadsheet-row-header {
-    @apply bg-spreadsheet-header font-medium text-gray-700 text-sm border-r border-b border-spreadsheet-gridLine flex items-center justify-center select-none;
+    @apply bg-gray-100 font-medium text-gray-700 text-sm border-r border-b border-gray-300 flex items-center justify-center select-none;
     height: 32px;
     min-width: 40px;
     max-width: 40px;
   }
 
   .spreadsheet-corner {
-    @apply bg-spreadsheet-header border-r border-b border-spreadsheet-gridLine;
+    @apply bg-gray-100 border-r border-b border-gray-300;
     min-width: 40px;
     max-width: 40px;
     height: 32px;

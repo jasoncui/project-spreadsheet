@@ -26,8 +26,13 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-hidden bg-white animate-fade-in">
-      <SpreadsheetGrid initialData={sampleData} rows={100} columns={26} />
+    <div className="min-h-screen w-full bg-white">
+      <div className="h-screen flex flex-col">
+        <h1 className="text-xl font-semibold p-4 border-b">Spreadsheet App</h1>
+        <div className="flex-grow overflow-hidden">
+          <SpreadsheetGrid initialData={sampleData} rows={100} columns={26} />
+        </div>
+      </div>
     </div>
   );
 };
