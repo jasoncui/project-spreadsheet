@@ -57,9 +57,9 @@ export const Cell: React.FC<CellProps> = ({
   
   // Handle key events in edit input
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter') {
       e.preventDefault();
-      onStopEditing(true);
+      onStopEditing(true); // Finalize editing and save the value
     } else if (e.key === 'Escape') {
       e.preventDefault();
       onStopEditing(false);
