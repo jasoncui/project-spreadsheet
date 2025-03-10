@@ -59,6 +59,7 @@ export const Cell: React.FC<CellProps> = ({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
+      inputRef.current?.blur(); // Force the input to lose focus
       onStopEditing(true); // Finalize editing and save the value
     } else if (e.key === 'Escape') {
       e.preventDefault();
