@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { 
   CellData, 
@@ -139,6 +140,19 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
       setSelectedRange(null);
     }
   }, [activeCell, editing, stopEditing]);
+
+  // New function to move selection up or down
+  const moveSelection = useCallback((direction: 'up' | 'down') => {
+    if (!activeCell) return;
+    
+    const { row, col } = activeCell;
+    
+    if (direction === 'up' && row > 0) {
+      selectCell({ row: row - 1, col });
+    } else if (direction === 'down' && row < config.rows - 1) {
+      selectCell({ row: row + 1, col });
+    }
+  }, [activeCell, config.rows, selectCell]);
 
   const getCellData = useCallback((row: number, col: number): CellData | undefined => {
     const cellKey = indicesToCellRef(row, col);
@@ -321,5 +335,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
     isCellSelected,
     isCellActive,
     config,
+    moveSelection,
   };
 }

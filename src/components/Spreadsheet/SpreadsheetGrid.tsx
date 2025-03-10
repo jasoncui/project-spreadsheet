@@ -37,6 +37,7 @@ export const SpreadsheetGrid: React.FC<SpreadsheetGridProps> = ({
     isCellSelected,
     isCellActive,
     config,
+    moveSelection,
   } = useSpreadsheet(initialData, {
     rows,
     cols: columns,
@@ -157,6 +158,7 @@ export const SpreadsheetGrid: React.FC<SpreadsheetGridProps> = ({
                         onDoubleClick={startEditing}
                         onEditValueChange={setEditValue}
                         onStopEditing={stopEditing}
+                        onEnterKey={(direction) => moveSelection(direction)}
                       />
                     );
                   })}

@@ -15,6 +15,7 @@ interface CellProps {
   onDoubleClick: () => void;
   onEditValueChange: (value: string) => void;
   onStopEditing: (save: boolean) => void;
+  onEnterKey: (direction: 'up' | 'down') => void;
 }
 
 export const Cell: React.FC<CellProps> = ({
@@ -29,6 +30,7 @@ export const Cell: React.FC<CellProps> = ({
   onDoubleClick,
   onEditValueChange,
   onStopEditing,
+  onEnterKey,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -59,8 +61,9 @@ export const Cell: React.FC<CellProps> = ({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      inputRef.current?.blur(); // Force the input to lose focus
       onStopEditing(true); // Finalize editing and save the value
+      inputRef.current?.blur(); // Force the input to lose focus
+      onEnterKey(e.shiftKey ? 'up' : 'down'); // Move to the cell above if shift is pressed, otherwise move down
     } else if (e.key === 'Escape') {
       e.preventDefault();
       onStopEditing(false);
