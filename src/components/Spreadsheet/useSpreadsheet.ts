@@ -25,6 +25,8 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
   const [selectedRange, setSelectedRange] = useState<CellRange | null>(null);
   const [editing, setEditing] = useState<boolean>(false);
   const [editValue, setEditValue] = useState<string>('');
+  // Add flag to prevent automatic edit mode after Enter key press
+  const [skipEditOnNextSelection, setSkipEditOnNextSelection] = useState<boolean>(false);
 
   const columnHeaders = useMemo(() => {
     return Array.from({ length: config.cols }, (_, i) => {
@@ -41,14 +43,17 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
   }, [config.cols]);
 
   const startEditing = useCallback(() => {
-    if (!activeCell) return;
+    if (!activeCell || skipEditOnNextSelection) {
+      setSkipEditOnNextSelection(false);
+      return;
+    }
     
     const cellKey = indicesToCellRef(activeCell.row, activeCell.col);
     const cellData = data[cellKey];
     
     setEditing(true);
     setEditValue(cellData?.formula || cellData?.value || '');
-  }, [activeCell, data]);
+  }, [activeCell, data, skipEditOnNextSelection]);
 
   const stopEditing = useCallback((save: boolean = true) => {
     if (!activeCell || !editing) return;
@@ -141,11 +146,14 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
     }
   }, [activeCell, editing, stopEditing]);
 
-  // New function to move selection up or down
+  // Modified moveSelection to include the skipEdit flag
   const moveSelection = useCallback((direction: 'up' | 'down') => {
     if (!activeCell) return;
     
     const { row, col } = activeCell;
+    
+    // Set flag to skip entering edit mode on the next cell selection
+    setSkipEditOnNextSelection(true);
     
     if (direction === 'up' && row > 0) {
       selectCell({ row: row - 1, col });
@@ -253,6 +261,8 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
           e.preventDefault();
           if (e.shiftKey) {
             if (row > 0) {
+              // When moving up with Shift+Enter, we don't want to enter edit mode
+              setSkipEditOnNextSelection(true);
               selectCell({ row: row - 1, col });
             }
           } else {

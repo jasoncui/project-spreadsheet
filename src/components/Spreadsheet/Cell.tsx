@@ -61,9 +61,9 @@ export const Cell: React.FC<CellProps> = ({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      // First stop editing and save the value
+      // Stop editing and save the value
       onStopEditing(true);
-      // Then move to the next cell (up or down) without starting edit mode
+      // Move to the next cell (up or down)
       onEnterKey(e.shiftKey ? 'up' : 'down');
     } else if (e.key === 'Escape') {
       e.preventDefault();
