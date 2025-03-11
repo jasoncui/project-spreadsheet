@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { 
   CellData, 
@@ -25,7 +26,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
   const [editing, setEditing] = useState<boolean>(false);
   const [editValue, setEditValue] = useState<string>('');
   const [skipEditOnNextSelection, setSkipEditOnNextSelection] = useState<boolean>(false);
-  const [formulaHasError, setFormulaHasError] = useState<boolean>(false);
 
   const columnHeaders = useMemo(() => {
     return Array.from({ length: config.cols }, (_, i) => {
@@ -61,15 +61,16 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
       const cellKey = indicesToCellRef(activeCell.row, activeCell.col);
       
       if (editValue.startsWith('=')) {
+        // Check for circular references directly in the current cell's context
         if (hasCircularReference(editValue, data, cellKey)) {
           toast.error('Circular reference detected!');
+          // Don't save the formula if it has circular references,
+          // but still exit editing mode
           setEditing(false);
           setEditValue('');
-          setFormulaHasError(true);
           return;
         }
         
-        setFormulaHasError(false);
         const newData = { ...data };
         
         try {
@@ -82,6 +83,7 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
             type: 'formula',
           };
           
+          // Recalculate dependent cells
           Object.keys(newData).forEach((key) => {
             if (key !== cellKey && newData[key]?.formula) {
               try {
@@ -103,7 +105,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
         } catch (error) {
           console.error('Formula evaluation error:', error);
           toast.error('Invalid formula');
-          setFormulaHasError(true);
           
           setData((prevData) => ({
             ...prevData,
@@ -116,7 +117,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
           }));
         }
       } else {
-        setFormulaHasError(false);
         const cellType = isNaN(Number(editValue)) ? 'text' : 'number';
         
         setData((prevData) => ({
@@ -129,8 +129,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
           }
         }));
       }
-    } else {
-      setFormulaHasError(false);
     }
     
     setEditing(false);
@@ -142,10 +140,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
       stopEditing(true);
     }
     
-    if (formulaHasError) {
-      setFormulaHasError(false);
-    }
-    
     if (isShiftKey && activeCell) {
       setSelectedRange({
         start: activeCell,
@@ -155,10 +149,10 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
       setActiveCell(position);
       setSelectedRange(null);
     }
-  }, [activeCell, editing, stopEditing, formulaHasError]);
+  }, [activeCell, editing, stopEditing]);
 
   const moveSelection = useCallback((direction: 'up' | 'down') => {
-    if (!activeCell || formulaHasError) return;
+    if (!activeCell) return;
     
     const { row, col } = activeCell;
     
@@ -169,7 +163,7 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
     } else if (direction === 'down' && row < config.rows - 1) {
       selectCell({ row: row + 1, col });
     }
-  }, [activeCell, config.rows, selectCell, formulaHasError]);
+  }, [activeCell, config.rows, selectCell]);
 
   const getCellData = useCallback((row: number, col: number): CellData | undefined => {
     const cellKey = indicesToCellRef(row, col);
