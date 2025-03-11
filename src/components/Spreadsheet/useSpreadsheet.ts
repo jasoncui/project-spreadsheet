@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { 
   CellData, 
@@ -60,8 +61,13 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
       const cellKey = indicesToCellRef(activeCell.row, activeCell.col);
       
       if (editValue.startsWith('=')) {
+        // Check for circular references directly in the current cell's context
         if (hasCircularReference(editValue, data, cellKey)) {
           toast.error('Circular reference detected!');
+          // Don't save the formula if it has circular references,
+          // but still exit editing mode
+          setEditing(false);
+          setEditValue('');
           return;
         }
         
@@ -77,6 +83,7 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
             type: 'formula',
           };
           
+          // Recalculate dependent cells
           Object.keys(newData).forEach((key) => {
             if (key !== cellKey && newData[key]?.formula) {
               try {
