@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { 
   CellData, 
@@ -25,7 +24,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
   const [selectedRange, setSelectedRange] = useState<CellRange | null>(null);
   const [editing, setEditing] = useState<boolean>(false);
   const [editValue, setEditValue] = useState<string>('');
-  // Add flag to prevent automatic edit mode after Enter key press
   const [skipEditOnNextSelection, setSkipEditOnNextSelection] = useState<boolean>(false);
 
   const columnHeaders = useMemo(() => {
@@ -146,13 +144,11 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
     }
   }, [activeCell, editing, stopEditing]);
 
-  // Modified moveSelection to include the skipEdit flag
   const moveSelection = useCallback((direction: 'up' | 'down') => {
     if (!activeCell) return;
     
     const { row, col } = activeCell;
     
-    // Set flag to skip entering edit mode on the next cell selection
     setSkipEditOnNextSelection(true);
     
     if (direction === 'up' && row > 0) {
@@ -232,6 +228,13 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
       
       const { row, col } = activeCell;
       
+      if (e.key.length === 1 && !editing) {
+        e.preventDefault();
+        setEditValue(e.key);
+        startEditing();
+        return;
+      }
+      
       switch (e.key) {
         case 'ArrowUp':
           if (row > 0) {
@@ -261,7 +264,6 @@ export function useSpreadsheet(initialData?: SpreadsheetData, config = DEFAULT_C
           e.preventDefault();
           if (e.shiftKey) {
             if (row > 0) {
-              // When moving up with Shift+Enter, we don't want to enter edit mode
               setSkipEditOnNextSelection(true);
               selectCell({ row: row - 1, col });
             }
